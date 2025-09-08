@@ -28,8 +28,8 @@ export interface  ICheck {
 }
 
 export interface ICardsData {
-	cards: ICard[];
-	cardid: string | null;
+	//_cards: ICard[];
+	//cardid: string | null;
 	getCard(cardId: string): ICard;
 }
 

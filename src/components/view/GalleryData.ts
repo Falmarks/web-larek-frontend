@@ -1,21 +1,18 @@
-import { ICard } from '../../types';
 import { IEvents } from '../base/events';
+import { Component } from '../base/Component';
 
-export class GalleryData {
-	protected _cards: ICard[] = [];
-	protected _preview: string | null = null;
-	protected events: IEvents;
+interface IGallery {
+	gallery: HTMLElement[]
+}
 
-	constructor(events: IEvents) {
+export class GalleryData extends Component<IGallery>{
+
+	constructor(container: HTMLElement, protected events: IEvents) {
+		super(container);
 		this.events = events;
 	}
 
-	set cards(cards: ICard[]) {
-		this._cards = cards;
-		this.events.emit('cards:changed')
-	}
-
-	get cards() {
-		return this._cards;
+	galleryLoad(cards: HTMLElement[]) {
+		this.container.replaceChildren(...cards);
 	}
 }

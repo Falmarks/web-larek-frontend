@@ -1,18 +1,23 @@
 import { IApi, ICard, IClient, IOrder, ICheck } from '../types';
+import { Api } from './base/api';
 
-export class AppApi {
-	private _baseApi: IApi;
+export class AppApi extends Api {
 
-	constructor(baseApi: IApi) {
-		this._baseApi = baseApi;
+	constructor(baseUrl: string) {
+		super(baseUrl);
 	}
 
 	getCards(): Promise<ICard[]> {
-		return this._baseApi.get<ICard[]>(`/product`).then((cards: ICard[]) => cards);
+		return this.get<ICard[]>('/product')
+			.then((cards: ICard[]) => {
+				return cards;
+			})
 	}
 
-	postOrder(data: IOrder) :Promise<ICheck> {
-		return this._baseApi.post<ICheck>(`/order`, data).then((response: ICheck) => response);
+	postOrder(data: IOrder): Promise<ICheck> {
+		return this.post<ICheck>('/order', data)
+			.then((response: ICheck) => {
+				return response;
+			})
 	}
-
 }
