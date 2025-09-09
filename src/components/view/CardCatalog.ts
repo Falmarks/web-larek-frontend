@@ -1,5 +1,6 @@
 import {Card} from './Card';
 import { IEvents } from '../base/events';
+import { ensureElement } from '../../utils/utils';
 
 export class CardCatalog extends Card {
 	protected cardCategory: HTMLSpanElement;
@@ -7,11 +8,11 @@ export class CardCatalog extends Card {
 	protected openButton: HTMLButtonElement;
 	protected events: IEvents;
 
-	constructor(protected template: HTMLTemplateElement, events: IEvents) {
-		super(template);
-		this.cardCategory = this.template.querySelector('.card__category');
-		this.cardImage = this.template.querySelector('.card__image');
-		this.openButton = this.template.querySelector('.gallery__item');
+	constructor(protected container: HTMLElement, events: IEvents) {
+		super(container);
+		this.cardCategory = ensureElement<HTMLElement>('.card__category', container);
+		this.cardImage = ensureElement<HTMLDivElement>('.card__image', container);
+		//this.openButton = ensureElement<HTMLButtonElement>('.gallery__item', container);
 		//this.events = events;
 		//this.openButton.addEventListener('click', () =>
 		//	super.events.emit('card:open', { card: this })

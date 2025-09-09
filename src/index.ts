@@ -24,7 +24,9 @@ const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 //const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 //const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 //const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
-const galleryElement: HTMLElement = document.querySelector('#gallery');
+const galleryElement = ensureElement<HTMLElement>('.gallery');
+
+//const galleryElement: HTMLElement = document.querySelector('#gallery');
 //const header = ensureElement<HTMLElement>('#header');
 //const modal = ensureElement<HTMLElement>('#modal');
 
@@ -36,13 +38,17 @@ api.getCards()
 	.then((data) => {
 		cardsData.setCards(data);
 		console.log('Список карточек, но массивом', data);
-		console.log('Список карточек', cardsData);
 	})
 
 events.on(`cards:changed`, () => {
-	const cardsArray = cardsData.getCards().map((cards) => {
+//	const cardsArray = cardsData.getCards().map((cards) => {
+//		const cardInstant = new CardCatalog(cloneTemplate(cardCatalogTemplate), events);
+//		return cardInstant.render(cards);
+	const cardsArray = cardsData.getCards()
+	const newArr = cardsArray.map((cards) => {
 		const cardInstant = new CardCatalog(cloneTemplate(cardCatalogTemplate), events);
 		return cardInstant.render(cards);
-	})
-	Gallery.render({gallery: cardsArray });
+		})
+	Gallery.render({galleryLoad: newArr });
+	console.log('ньюаррей',newArr);
 })

@@ -2,7 +2,7 @@ import { ICard, ICardsData } from '../../types';
 import { IEvents } from '../base/events';
 
 export class CardsData implements ICardsData {
-	protected _cards: ICard[] = [];
+	protected _cards: ICard[];
 	protected events: IEvents;
 	//protected cardid: string | null;
 	constructor(events: IEvents) {
@@ -19,5 +19,6 @@ export class CardsData implements ICardsData {
 	}
 	getCards () {
 		return this._cards;
+
 	}
 }

@@ -2,7 +2,7 @@ import { IEvents } from '../base/events';
 import { Component } from '../base/Component';
 
 interface IGallery {
-	gallery: HTMLElement[]
+	galleryLoad: HTMLElement[]
 }
 
 export class GalleryData extends Component<IGallery>{
@@ -12,7 +12,7 @@ export class GalleryData extends Component<IGallery>{
 		this.events = events;
 	}
 
-	galleryLoad(cards: HTMLElement[]) {
+	set galleryLoad (cards: HTMLElement[]) {
 		this.container.replaceChildren(...cards);
 	}
 }

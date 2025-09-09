@@ -1,6 +1,13 @@
 import { IApi, ICard, IClient, IOrder, ICheck } from '../types';
 import { Api } from './base/api';
 
+
+export interface IProductsData {
+	items: ICard[];
+	preview: string | null;
+	total: number;
+}
+
 export class AppApi extends Api {
 
 	constructor(baseUrl: string) {
@@ -8,9 +15,9 @@ export class AppApi extends Api {
 	}
 
 	getCards(): Promise<ICard[]> {
-		return this.get<ICard[]>('/product')
-			.then((cards: ICard[]) => {
-				return cards;
+		return this.get('/product')
+			.then((cards: IProductsData) => {
+				return cards.items
 			})
 	}
 
