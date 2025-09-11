@@ -1,13 +1,33 @@
 import { Card } from '../components/view/Card';
 
 export interface ICard {
-	_id: string;
+	id: string;
 	title: string;
 	category: string;
-	description: string;
 	price: number | null;
+}
+
+export interface ICardCatalog {
+	id: string;
+	title: string;
+	price: number | null;
+	category: string;
 	image: string;
-	putValidation(price: number | null): boolean;
+}
+
+export interface ICardPreview {
+	id: string;
+	title: string;
+	price: number | null;
+	category: string;
+	image: string;
+	description: string;
+}
+
+export interface ICardBasket {
+	id: string;
+	title: string;
+	price: number | null;
 }
 
 export interface IClient {
@@ -27,10 +47,28 @@ export interface  ICheck {
 	total: number;
 }
 
+export interface ICardData {
+	id: string;
+	title: string;
+	price: number | null;
+	category: string;
+	image: string;
+	description: string;
+}
+
 export interface ICardsData {
-	//_cards: ICard[];
-	//cardid: string | null;
 	getCard(cardId: string): ICard;
+}
+
+export interface IModal {
+	content: HTMLElement;
+}
+
+export interface IHeader {counter: number;
+}
+
+export interface IBasket {
+	content: HTMLElement;
 }
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'PATCH' | 'DELETE';

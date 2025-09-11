@@ -1,7 +1,8 @@
 import {Card} from './Card';
 import { IEvents } from '../base/events';
+import { ICard, ICardBasket } from '../../types';
 
-export class CardBasket extends Card {
+export class CardBasket extends Card<ICardBasket> {
 	protected cardItemIndex: HTMLDivElement;
 	protected deleteButton: HTMLButtonElement;
 	protected events: IEvents;

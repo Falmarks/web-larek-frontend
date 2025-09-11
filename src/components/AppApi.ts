@@ -1,9 +1,9 @@
-import { IApi, ICard, IClient, IOrder, ICheck } from '../types';
+import { IApi, ICard, IClient, IOrder, ICheck, ICardData } from '../types';
 import { Api } from './base/api';
 
 
 export interface IProductsData {
-	items: ICard[];
+	items: ICardData[];
 	preview: string | null;
 	total: number;
 }
@@ -14,7 +14,7 @@ export class AppApi extends Api {
 		super(baseUrl);
 	}
 
-	getCards(): Promise<ICard[]> {
+	getCards(): Promise<ICardData[]> {
 		return this.get('/product')
 			.then((cards: IProductsData) => {
 				return cards.items
