@@ -1,4 +1,11 @@
-import { IApi, ICard, IClient, IOrder, ICheck, ICardData } from '../types';
+import {
+	IApi,
+	IClient,
+	IOrder,
+	ICheck,
+	ICardData,
+	ICardCatalog,
+} from '../types';
 import { Api } from './base/api';
 
 

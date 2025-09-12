@@ -7,9 +7,13 @@ import { Gallery } from './components/view/Gallery';
 import { AppApi } from './components/AppApi';
 import { CardCatalog } from './components/view/CardCatalog';
 import { CardsData } from './components/model/CardsData';
+import {BasketData} from './components/model/BasketData';
 import { CardPreview } from './components/view/CardPreview';
 import { Modal } from './components/Modals/Modal';
-import { Basket } from './components/Modals/Basket';
+import { Basket } from './components/view/Basket';
+import { Header } from './components/view/Header';
+import { CardBasket } from './components/view/CardBascet';
+import { ICardBasket } from './types';
 const events: IEvents = new EventEmitter();
 
 // Отладка
@@ -26,13 +30,17 @@ const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const galleryElement = ensureElement<HTMLElement>('.gallery');
-const header = ensureElement<HTMLElement>('.header');
-
+const headerElement = ensureElement<HTMLElement>('.header');
 const api: AppApi = new AppApi(API_URL);
 const cardsData = new CardsData(events);
+const basketData = new BasketData(events);
 const gallery = new Gallery(galleryElement, events);
-const basket = new Basket(basketTemplate, events);
+const header = new Header(headerElement, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
+const basket = new Basket(cloneTemplate(basketTemplate), events);
+
+header.render();
+
 
 api.getCards()
 	.then((data) => {
@@ -54,18 +62,37 @@ events.on('card:open', ({id}: {id: string})  => {
 	const cardData = cardsData.getCard(id);
 	const cardInstant = new CardPreview(cloneTemplate(cardPreviewTemplate), events);
 	const cardRendered = cardInstant.render({
+		id: cardData.id,
 		title: cardData.title,
 		price: cardData.price,
 		category: cardData.category,
 		image: cardData.image,
-		description: cardData.description,
+		description: cardData.description
 	});
 	modal.render({content: cardRendered});
 	//console.log('Эта картдата',cardsData.getCard(id), 'Эта кардрендеред',cardRendered)
 })
 
-//events.on('basket:open',() => {
-//	const basketInstant = new Basket(cloneTemplate(cardBasketTemplate), events);
-//	const basketRendered = basketInstant.render({
-//	})
-//})
+events.on ('card:put', ({id}: {id: string})  => {
+	const cardData = cardsData.getCard(id);
+	const cardInstant = new CardBasket(cloneTemplate(cardBasketTemplate), events);
+	const indexLength = basketData.getCardsCount();
+	basketData.addCard(cardInstant);
+//	const cardRendered = cardInstant.render({
+//		title: cardData.title,
+//	  price: cardData.price,
+//		index: indexLength
+//	});
+	console.log(cardInstant);
+//	console.log(cardRendered, indexLength);
+
+
+})
+
+events.on('basket:open',() => {
+	modal.render({
+		content: basket.render({
+			total: basket.total
+			})
+		});
+})

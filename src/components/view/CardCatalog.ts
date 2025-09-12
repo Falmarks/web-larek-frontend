@@ -15,8 +15,9 @@ export class CardCatalog extends Card <ICardCatalog>{
 		this.cardImage = ensureElement<HTMLImageElement>('.card__image', container);
 		this.events = events;
 
-		this.container.addEventListener('click', () =>
+		this.container.addEventListener('click', () => {
 			this.events.emit('card:open', {id: this.id})
+			console.log(this.id)}
 		);
 	};
 

@@ -1,9 +1,10 @@
-import { ICardData, ICardsData } from '../../types';
+import { ICardData} from '../../types';
 import { IEvents } from '../base/events';
 
-export class CardsData implements ICardsData {
+export class CardsData {
 	protected _cards: ICardData[];
 	protected events: IEvents;
+
 	constructor(events: IEvents) {
 	this.events = events;
 	}

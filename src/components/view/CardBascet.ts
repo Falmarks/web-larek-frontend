@@ -1,15 +1,15 @@
 import {Card} from './Card';
 import { IEvents } from '../base/events';
-import { ICard, ICardBasket } from '../../types';
+import { ICardBasket } from '../../types';
 
 export class CardBasket extends Card<ICardBasket> {
-	protected cardItemIndex: HTMLDivElement;
-	protected deleteButton: HTMLButtonElement;
 	protected events: IEvents;
+	protected cardIndex: HTMLSpanElement;
+	protected deleteButton: HTMLButtonElement;
 
 	constructor(protected template: HTMLTemplateElement, events: IEvents) {
 		super(template);
-		this.cardItemIndex = this.template.querySelector('.card__category');
+		this.cardIndex = this.template.querySelector('.basket__item-index');
 		this.deleteButton = this.template.querySelector('.card__button');
 		this.events = events;
 
@@ -17,4 +17,6 @@ export class CardBasket extends Card<ICardBasket> {
 			super.events.emit('card:delete', { card: this })
 		);
 	}
+
+	set index(value: number) {this.setText(this.cardIndex, value);}
 }

@@ -1,34 +1,3 @@
-import { Card } from '../components/view/Card';
-
-export interface ICard {
-	id: string;
-	title: string;
-	category: string;
-	price: number | null;
-}
-
-export interface ICardCatalog {
-	id: string;
-	title: string;
-	price: number | null;
-	category: string;
-	image: string;
-}
-
-export interface ICardPreview {
-	id: string;
-	title: string;
-	price: number | null;
-	category: string;
-	image: string;
-	description: string;
-}
-
-export interface ICardBasket {
-	id: string;
-	title: string;
-	price: number | null;
-}
 
 export interface IClient {
 	payment: 'cash' | 'card' | '';
@@ -54,21 +23,25 @@ export interface ICardData {
 	category: string;
 	image: string;
 	description: string;
+	index?: number;
 }
 
-export interface ICardsData {
-	getCard(cardId: string): ICard;
-}
+export type ICardCatalog = Pick <ICardData, 'id' | 'title' | 'price' | 'category' | 'image'>
+
+export type ICardBasket = Pick <ICardData, 'id' | 'title' | 'price' | 'index'>
 
 export interface IModal {
 	content: HTMLElement;
 }
 
-export interface IHeader {counter: number;
+export interface IHeader {
+	counter: number;
 }
 
 export interface IBasket {
-	content: HTMLElement;
+	list: string;
+	button: string;
+	total: string;
 }
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -83,4 +56,4 @@ export type TClientModalPaymentAddress = Pick<IClient, 'payment' | 'address'>;
 
 export type TClientModalNumberMail = Pick<IClient, 'email' | 'phone'>;
 
-export type CardInfoInBasket = Pick<ICard, 'title'| 'price'>
+

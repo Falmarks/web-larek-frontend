@@ -1,10 +1,10 @@
 import {Card} from './Card';
 import { IEvents } from '../base/events';
 import { ensureElement } from '../../utils/utils';
-import { ICardData, ICardPreview } from '../../types';
+import { ICardData } from '../../types';
 import { CDN_URL } from '../../utils/constants';
 
-export class CardPreview extends Card<ICardPreview> {
+export class CardPreview extends Card<ICardData> {
 	protected cardCategory: HTMLElement
 	protected cardImage: HTMLImageElement;
 	protected cardDescription: HTMLElement;
@@ -21,9 +21,10 @@ export class CardPreview extends Card<ICardPreview> {
 
 		//events.on('modal:open', )
 
-		this.putButton.addEventListener('click', () =>
-			super.events.emit('card:put', { card: this })
-		);
+		this.putButton.addEventListener('click', () => {
+			this.events.emit('card:put', { id: this.id });
+			console.log(this.id)
+		});
 	}
 		set category(value: string) {
 			this.setText(this.cardCategory, value);
@@ -33,5 +34,7 @@ export class CardPreview extends Card<ICardPreview> {
 			const trueValue = `${CDN_URL}`+`${value.slice(0, -3) + 'png'}`;
 			this.setImage(this.cardImage, trueValue)
 		};
-		set description (value: string) { this.setText(this.cardDescription, value)};
+		set description (value: string) {
+			this.setText(this.cardDescription, value)
+		};
 }
