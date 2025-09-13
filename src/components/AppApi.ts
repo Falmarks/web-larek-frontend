@@ -1,10 +1,10 @@
 import {
 	IApi,
 	IClient,
-	IOrder,
 	ICheck,
 	ICardData,
 	ICardCatalog,
+	IOrderData,
 } from '../types';
 import { Api } from './base/api';
 
@@ -28,7 +28,7 @@ export class AppApi extends Api {
 			})
 	}
 
-	postOrder(data: IOrder): Promise<ICheck> {
+	postOrder(data: IOrderData): Promise<ICheck> {
 		return this.post<ICheck>('/order', data)
 			.then((response: ICheck) => {
 				return response;

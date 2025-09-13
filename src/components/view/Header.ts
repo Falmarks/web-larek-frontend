@@ -5,14 +5,14 @@ import { ensureElement } from '../../utils/utils';
 
 export class Header extends Component<IHeader> {
 	protected events: IEvents;
-	protected counter: HTMLSpanElement;
+	protected cardsCounter: HTMLElement;
 	protected basketButton: HTMLButtonElement;
 
 
 	constructor(protected container: HTMLElement, events: IEvents) {
 		super(container);
 
-		this.counter = ensureElement<HTMLSpanElement>('.header__basket-counter')
+		this.cardsCounter = ensureElement<HTMLElement>('.header__basket-counter')
 		this.basketButton = ensureElement<HTMLButtonElement>('.header__basket')
 		this.events = events;
 
@@ -22,11 +22,7 @@ export class Header extends Component<IHeader> {
 		});
 	}
 
-	set _counter (value: number) {
-		this._counter = value;
-	}
-
-	set countUpdate(value:number) {
-		this.setText(this.counter, value);
+	set count(value:number) {
+		this.setText(this.cardsCounter, value);
 	}
 }

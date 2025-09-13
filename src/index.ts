@@ -1,6 +1,6 @@
 import './scss/styles.scss';
 
-import { API_URL} from './utils/constants';
+import { API_URL, cardClass } from './utils/constants';
 import { EventEmitter, IEvents } from './components/base/events';
 import {cloneTemplate, ensureElement} from "./utils/utils";
 import { Gallery } from './components/view/Gallery';
@@ -13,7 +13,10 @@ import { Modal } from './components/Modals/Modal';
 import { Basket } from './components/view/Basket';
 import { Header } from './components/view/Header';
 import { CardBasket } from './components/view/CardBascet';
-import { ICardBasket } from './types';
+import { ICardBasket, Payment } from './types';
+import { OrderPaymentForm } from './components/view/OrderPaymentForm';
+import { ClientData } from './components/model/ClientData';
+import { Page } from './components/view/Page';
 const events: IEvents = new EventEmitter();
 
 // Отладка
@@ -32,15 +35,19 @@ const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const galleryElement = ensureElement<HTMLElement>('.gallery');
 const headerElement = ensureElement<HTMLElement>('.header');
 const api: AppApi = new AppApi(API_URL);
+
 const cardsData = new CardsData(events);
 const basketData = new BasketData(events);
-const gallery = new Gallery(galleryElement, events);
+const clientData = new ClientData(events);
+
+const page = new Page(document.body, events);
 const header = new Header(headerElement, events);
+const gallery = new Gallery(galleryElement, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
+const Order = new OrderPaymentForm(cloneTemplate(orderTemplate), events);
 
 header.render();
-
 
 api.getCards()
 	.then((data) => {
@@ -51,7 +58,7 @@ api.getCards()
 events.on(`cards:changed`, () => {
 	const cardsArray = cardsData.getCards()
 	const newArr = cardsArray.map((cards) => {
-		const cardInstant = new CardCatalog(cloneTemplate(cardCatalogTemplate), events);
+		const cardInstant = new CardCatalog(cloneTemplate(cardCatalogTemplate), events, cardClass);
 		return cardInstant.render(cards);
 		})
 	gallery.render({galleryLoad: newArr });
@@ -75,24 +82,67 @@ events.on('card:open', ({id}: {id: string})  => {
 
 events.on ('card:put', ({id}: {id: string})  => {
 	const cardData = cardsData.getCard(id);
-	const cardInstant = new CardBasket(cloneTemplate(cardBasketTemplate), events);
-	const indexLength = basketData.getCardsCount();
-	basketData.addCard(cardInstant);
-//	const cardRendered = cardInstant.render({
-//		title: cardData.title,
-//	  price: cardData.price,
-//		index: indexLength
-//	});
-	console.log(cardInstant);
-//	console.log(cardRendered, indexLength);
-
-
+	const indexLength = basketData.getCardsCount()+1;
+	basketData.addCard({
+		id: cardData.id,
+		title: cardData.title,
+		price: cardData.price,
+		index: indexLength
+	});
+//	console.log(basketData);
 })
+
+events.on ('card:delete', ( card: ICardBasket)  => {
+	basketData.deleteCard(card.id);
+})
+
+events.on ('basketCards:changed', (cards: ICardBasket[])  => {
+	header.render({count: cards.length});
+	const basketCardsArray = basketData.getCards().map((card) => {
+		const cardInstant = new CardBasket(cloneTemplate(cardBasketTemplate), events);
+		return cardInstant.render({
+			...card
+		});
+	});
+	const totalPrice = basketData.getTotalBasketPrice();
+	const isEmpty = basketData.getCards().length !== 0;
+	//console.log('Значения до рендера',totalPrice, isEmpty, basket)
+	basket.render({
+		list: basketCardsArray,
+		total: totalPrice,
+		valid: isEmpty
+	});
+});
 
 events.on('basket:open',() => {
-	modal.render({
-		content: basket.render({
-			total: basket.total
-			})
+	const isEmpty = basketData.getCards().length !== 0;
+	const renderedBasket = basket.render({valid: isEmpty});
+		modal.render({
+			content: renderedBasket
 		});
 })
+
+events.on('orderPaymentForm:open',() => {
+	const renderedFormOrder = Order.render({checkPayment: false});
+	modal.render({content: renderedFormOrder});
+	events.on('orderPayment:changed',({payment}: {payment: Payment})  => {
+		clientData.setClientPayment(payment)
+		Order.render({ checkPayment: true})
+	})
+	events.on('clientData:changed', () => {
+		const Data = clientData.getClientData()
+		console.log('Способ оплаты: ',Data.payment)
+		Order.paymentMethod = Data.payment;
+	});
+
+	events.on('modal:open', () => {
+		page.locked = true;
+		console.log('Сейчас должно добавляться враппер локед')
+	});
+
+	events.on('modal:close', () => {
+		page.locked = false;
+		console.log('Сейчас должно убавляться враппер локед')
+	});
+})
+

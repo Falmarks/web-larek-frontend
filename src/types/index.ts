@@ -1,13 +1,24 @@
 
 export interface IClient {
-	payment: 'cash' | 'card' | '';
+	payment: Payment;
 	address: string;
 	email: string;
 	phone: string;
+	checkPayment: boolean;
 }
 
-export interface IOrder extends IClient {
+export type TClientModalPaymentAddress = Pick<IClient, 'payment' | 'address'| 'checkPayment'>;
+
+export type TClientModalNumberMail = Pick<IClient, 'email' | 'phone'>;
+
+export interface IOrderData {
+	payment: string;
+	email: string;
+	phone: string;
+	address: string;
 	total: number;
+	valid: boolean;
+	errors: string;
 	items: string[];
 }
 
@@ -35,25 +46,23 @@ export interface IModal {
 }
 
 export interface IHeader {
-	counter: number;
+	count: number;
 }
 
 export interface IBasket {
-	list: string;
+	list: HTMLElement[];
 	button: string;
-	total: string;
+	total: number;
+	valid: boolean;
 }
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+export type Payment = 'cash' | 'online' | '';
 
 export interface IApi {
 	baseURL: string;
 	get<T>(url: string): Promise<T>;
 	post<T>(url: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
-
-export type TClientModalPaymentAddress = Pick<IClient, 'payment' | 'address'>;
-
-export type TClientModalNumberMail = Pick<IClient, 'email' | 'phone'>;
 
 

@@ -12,7 +12,7 @@ export class Gallery extends Component<IGallery>{
 		this.events = events;
 	}
 
-	set galleryLoad (cards: HTMLElement[]) {
-		this.container.replaceChildren(...cards);
+	set galleryLoad (value: HTMLElement[]) {
+		this.container.replaceChildren(...value);
 	}
 }

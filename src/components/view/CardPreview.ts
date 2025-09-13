@@ -5,7 +5,7 @@ import { ICardData } from '../../types';
 import { CDN_URL } from '../../utils/constants';
 
 export class CardPreview extends Card<ICardData> {
-	protected cardCategory: HTMLElement
+	protected cardCategory: HTMLSpanElement
 	protected cardImage: HTMLImageElement;
 	protected cardDescription: HTMLElement;
 	protected putButton: HTMLButtonElement;

@@ -30,12 +30,14 @@ export class Modal extends Component<IModal> {
     open() {
         this.container.classList.add('modal_active');
         this.events.emit('modal:open');
+				console.log('Происходит modal:open')
     }
 
     close() {
         this.container.classList.remove('modal_active');
         this.content = null;
         this.events.emit('modal:close');
+			console.log('Происходит modal:close')
     }
 
 		handleEscUp(event: KeyboardEvent) {
