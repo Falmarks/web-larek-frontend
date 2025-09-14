@@ -9,13 +9,13 @@ export class CardsData {
 	this.events = events;
 	}
 
+	getCard(cardId: string) {
+		return this._cards.find((item) => item.id === cardId)
+	}
+
 	setCards(cards: ICardData[]) {
 		this._cards = cards;
 		this.events.emit(`cards:changed`);
-	}
-
-	getCard(cardId: string) {
-		return this._cards.find((item) => item.id === cardId)
 	}
 
 	getCards () {
