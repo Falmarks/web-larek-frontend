@@ -5,17 +5,17 @@ import { ICardCatalog } from '../../types';
 import { CDN_URL } from '../../utils/constants';
 
 export class CardCatalog extends Card <ICardCatalog>{
-	protected cardCategory: HTMLSpanElement;
 	protected cardClass: Record<string, string>
+	protected cardCategory: HTMLSpanElement;
 	protected cardImage: HTMLImageElement;
 	protected events: IEvents;
 
 	constructor(protected container: HTMLElement, events: IEvents, category: Record<string, string>) {
 		super(container);
-		this.cardClass = category;
 		this.cardCategory = ensureElement<HTMLElement>('.card__category', container);
 		this.cardImage = ensureElement<HTMLImageElement>('.card__image', container);
 		this.events = events;
+		this.cardClass = category;
 
 		this.container.addEventListener('click', () => {
 			this.events.emit('card:open', {id: this.id})

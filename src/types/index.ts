@@ -1,10 +1,9 @@
 
 export interface IClient {
-	payment: Payment;
+	payment: string;
 	address: string;
 	email: string;
 	phone: string;
-	//checkPayment: boolean;
 }
 
 
@@ -15,14 +14,14 @@ export interface IOrderData {
 	phone: string;
 	address: string;
 	total: number;
-	valid: boolean;
-	errors: string;
+	valid?: boolean;
+	errors?: string;
 	items: string[];
 }
 
 export type TOrderPaymentAddress = Pick<IOrderData, 'payment' | 'address' | 'valid' | 'errors'>;
 
-export type TOrderNumberMail = Pick<IOrderData, 'email' | 'phone'>;
+export type TOrderNumberMail = Pick<IOrderData, 'email' | 'phone' | 'valid' | 'errors'>;
 
 export interface  ICheck {
 	id: string;
@@ -56,6 +55,10 @@ export interface IBasket {
 	button: string;
 	total: number;
 	valid: boolean;
+}
+
+export interface ISuccess {
+	totalPrice: number;
 }
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'PATCH' | 'DELETE';

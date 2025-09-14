@@ -1,27 +1,31 @@
 import { IEvents } from '../base/events';
 import { ensureElement } from '../../utils/utils';
-import { Component } from '../base/Component';
 import { TOrderNumberMail } from '../../types';
+import { Form } from './Form';
 
-
-export class OrderContactsForm extends Component<TOrderNumberMail>  {
-
-	protected emailInputElement: HTMLInputElement;
-	protected phoneInputElement: HTMLInputElement;
-	protected events: IEvents;
+export class OrderContactsForm extends Form<TOrderNumberMail>  {
+	protected emailInput: HTMLInputElement;
+	protected phoneInput: HTMLInputElement;
 
 	constructor(container: HTMLFormElement, events: IEvents) {
-		super(container);
-		this.events = events;
-		this.emailInputElement = ensureElement<HTMLInputElement>('input[name=email]', container);
-		this.phoneInputElement = ensureElement<HTMLInputElement>('input[name=phone]', container);
-	}
+		super(container, events);
 
-	set email(value: string) {
-		this.emailInputElement.value = value;
-	}
+		this.emailInput = ensureElement<HTMLInputElement>('input[name=email]', container);
+		this.phoneInput = ensureElement<HTMLInputElement>('input[name=phone]', container);
 
-	set phone(value: string) {
-		this.phoneInputElement.value = value;
+		this.emailInput.addEventListener('input', () => {
+			console.log('Фиксирую ввод почты', this.emailInput.value);
+			this.events.emit('orderContactsForm:changedEmailInput', {email: this.emailInput.value});
+		});
+
+		this.phoneInput.addEventListener('input', () => {
+			console.log('Фиксирую ввод номера', this.phoneInput.value);
+			this.events.emit('orderContactsForm:changedPhoneInput', {phone: this.phoneInput.value});
+		});
+
+		this.form.addEventListener('submit', (evt: SubmitEvent) => {
+			evt.preventDefault();
+			events.emit('orderContactsForm:submit');
+		});
 	}
 }

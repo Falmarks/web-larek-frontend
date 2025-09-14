@@ -13,10 +13,12 @@ import { Modal } from './components/Modals/Modal';
 import { Basket } from './components/view/Basket';
 import { Header } from './components/view/Header';
 import { CardBasket } from './components/view/CardBascet';
-import { ICardBasket, Payment } from './types';
+import { ICardBasket, ICheck, IOrderData, Payment } from './types';
 import { OrderPaymentForm } from './components/view/OrderPaymentForm';
 import { ClientData } from './components/model/ClientData';
 import { Page } from './components/view/Page';
+import { OrderContactsForm } from './components/view/OrderContactsForm';
+import { Success } from './components/view/Success';
 const events: IEvents = new EventEmitter();
 
 // Отладка
@@ -45,7 +47,9 @@ const header = new Header(headerElement, events);
 const gallery = new Gallery(galleryElement, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
-const Order = new OrderPaymentForm(cloneTemplate(orderTemplate), events);
+const orderPayment = new OrderPaymentForm(cloneTemplate(orderTemplate), events);
+const orderContacts = new OrderContactsForm(cloneTemplate(contactsTemplate), events);
+const success = new Success(cloneTemplate(successTemplate), events);
 
 header.render();
 
@@ -67,7 +71,7 @@ events.on(`cards:changed`, () => {
 
 events.on('card:open', ({id}: {id: string})  => {
 	const cardData = cardsData.getCard(id);
-	const cardInstant = new CardPreview(cloneTemplate(cardPreviewTemplate), events);
+	const cardInstant = new CardPreview(cloneTemplate(cardPreviewTemplate), events, cardClass);
 	const cardRendered = cardInstant.render({
 		id: cardData.id,
 		title: cardData.title,
@@ -76,20 +80,24 @@ events.on('card:open', ({id}: {id: string})  => {
 		image: cardData.image,
 		description: cardData.description
 	});
+
+
 	modal.render({content: cardRendered});
 	//console.log('Эта картдата',cardsData.getCard(id), 'Эта кардрендеред',cardRendered)
 })
 
 events.on ('card:put', ({id}: {id: string})  => {
 	const cardData = cardsData.getCard(id);
+	if(basketData.cardInBasket(id)) {
+		basketData.deleteCard(id)
+	} else {
 	const indexLength = basketData.getCardsCount()+1;
 	basketData.addCard({
 		id: cardData.id,
 		title: cardData.title,
 		price: cardData.price,
 		index: indexLength
-	});
-//	console.log(basketData);
+	});}
 })
 
 events.on ('card:delete', ( card: ICardBasket)  => {
@@ -106,7 +114,6 @@ events.on ('basketCards:changed', (cards: ICardBasket[])  => {
 	});
 	const totalPrice = basketData.getTotalBasketPrice();
 	const isEmpty = basketData.getCards().length !== 0;
-	//console.log('Значения до рендера',totalPrice, isEmpty, basket)
 	basket.render({
 		list: basketCardsArray,
 		total: totalPrice,
@@ -123,39 +130,77 @@ events.on('basket:open',() => {
 })
 
 events.on('orderPaymentForm:open',() => {
-	const renderedFormOrder = Order.render();
+	const renderedFormOrder = orderPayment.render();
 	modal.render({content: renderedFormOrder});
-	Order.valid = false;
-	events.on('orderPaymentForm:changed',({inputsValues}: {inputsValues: Record<string,string>})  => {
-		console.log('я маненький папищик, я палутяю ',inputsValues);
-		//clientData.setClientAddress(inputsValues.address);
-		//clientData.setClientPayment(inputsValues.payment);
-		Order.render();
-	});
-
-	events.on('clientData:changed', () => {
-		const data = clientData.getClientData()
-		const isValid = clientData.checkUserValidation(data.address);
-		Order.paymentMethod = data.payment;
-		Order.render({
-			valid: isValid,
-			errors: clientData.getErrorMessage()
-		});
-		console.log('isValid ',isValid);
-		console.log('Order.valid: ',Order.valid);
-	});
+	orderPayment.valid = false;
 })
 
-events.on('orderPaymentForm:submit', (value) => {
-		const Data  = clientData.getClientData();
-		const isAddressValid = clientData.checkUserValidation(Data.address);
-		const isPaymentValid = Data.payment !== '';
-		const isValid = isAddressValid && isPaymentValid;
+events.on('orderPaymentForm:changedButton',(value: {payment: string})  => {
+	clientData.setClientPayment(value);
+	orderPayment.paymentMethod = value.payment;
+	orderPayment.render();
+});
 
-		Order.render({
-			valid: isValid,
-			errors: clientData.getErrorMessage()
-		});
+events.on('orderPaymentForm:changedInput',(value: {address: string})  => {
+	clientData.setClientAddress(value);
+	orderPayment.render()
+})
+
+events.on('orderPaymentForm:submit', () => {
+	const renderedOrderContacts = orderContacts.render();
+	modal.render({content: renderedOrderContacts});
+	orderContacts.valid = false;
+});
+
+events.on('orderContactsForm:changedEmailInput',(value: {email: string})  => {
+	clientData.setClientEmail(value);
+	orderPayment.render()
+})
+
+events.on('orderContactsForm:changedPhoneInput',(value: {phone: string})  => {
+	clientData.setClientPhone(value);
+
+	orderPayment.render()
+})
+
+events.on('clientData:changed', () => {
+
+	const paymentValid = clientData.validatePayment();
+	const contactsValid = clientData.validateContacts();
+
+	orderPayment.render({
+		valid: paymentValid,
+		errors: clientData.getPaymentErrorMessage()
+	});
+
+	orderContacts.render({
+		valid: contactsValid,
+		errors: clientData.getContactsErrorMessage()
+	});
+
+});
+
+events.on('orderContactsForm:submit', () => {
+	const clientOrderData = clientData.getClientData();
+	const totalPrice = basketData.getTotalBasketPrice();
+	const basketList = basketData.getCards().map((product) => {
+		return product.id;
+	});
+
+	const orderData = {
+		items: basketList,
+		total: totalPrice,
+		...clientOrderData
+	}
+
+	console.log(orderData);
+
+	api.postOrder(orderData)
+		.then((data: ICheck) => {
+			const renderedSuccess = success.render({totalPrice: data.total});
+			modal.render({content: renderedSuccess});
+		})
+		.catch(err => console.error(err));
 });
 
 events.on('modal:open', () => {
