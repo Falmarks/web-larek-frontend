@@ -14,6 +14,7 @@ export class Form<T> extends Component<T> {
 		this.events = events;
 		this.submitButton = ensureElement<HTMLButtonElement>('button[type=submit]', container);
 		this.errorsElement = ensureElement<HTMLElement>('.form__errors', container);
+
 	}
 
 	set errors(value: string) {
@@ -22,6 +23,10 @@ export class Form<T> extends Component<T> {
 
 	set valid(value: boolean) {
 		this.setDisabled(this.submitButton, !value);
+	}
+	protected clear(): void {
+		this.form.reset();
+		this.errors = '';
 	}
 
 }

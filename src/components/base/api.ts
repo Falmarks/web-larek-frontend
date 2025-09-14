@@ -7,9 +7,16 @@ export type ApiListResponse<Type> = {
 
 export class Api implements IApi {
     readonly baseUrl: string;
+		protected options: RequestInit;
 
-    constructor(baseUrl: string) {
+    constructor(baseUrl: string, options: RequestInit = {}) {
         this.baseUrl = baseUrl;
+				this.options = {
+				headers: {
+					'Content-Type': 'application/json',
+					...(options.headers as object ?? {})
+				}
+			};
     }
     baseURL: string;
 
@@ -27,6 +34,7 @@ export class Api implements IApi {
 
     post<T>(uri: string, data: object, method: ApiPostMethods = 'POST') {
         return fetch(this.baseUrl + uri, {
+					...this.options,
 					method,
 					body: JSON.stringify(data),
 				}).then(this.handleResponse<T>);

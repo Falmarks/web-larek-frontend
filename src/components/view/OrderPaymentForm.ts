@@ -17,11 +17,11 @@ export class OrderPaymentForm extends Form<TOrderPaymentAddress> {
 		this.addressInput = ensureElement<HTMLInputElement>('input[name=address]', container);
 
 		this.cashButton.addEventListener('click', ()=> {
-			events.emit('orderPaymentForm:changedButton', {payment:'cash'});
+			this.events.emit('orderPaymentForm:changedButton', {payment:'cash'});
 		});
 
 		this.onlineButton.addEventListener('click', ()=> {
-			events.emit('orderPaymentForm:changedButton', {payment: 'online'});
+			this.events.emit('orderPaymentForm:changedButton', {payment: 'card'});
 		});
 
 		this.addressInput.addEventListener('input', () => {
@@ -30,12 +30,13 @@ export class OrderPaymentForm extends Form<TOrderPaymentAddress> {
 
 		this.form.addEventListener('submit', (evt: SubmitEvent) => {
 			evt.preventDefault();
+			this.clear();
 			events.emit('orderPaymentForm:submit');
 		});
 	}
 
 	set paymentMethod(value: string) {
-		if (value === 'online') {
+		if (value === 'card') {
 			this.onlineButton.classList.add('button_alt-active');
 			this.cashButton.classList.remove('button_alt-active');
 		} else {

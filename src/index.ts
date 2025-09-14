@@ -21,11 +21,6 @@ import { OrderContactsForm } from './components/view/OrderContactsForm';
 import { Success } from './components/view/Success';
 const events: IEvents = new EventEmitter();
 
-// Отладка
-//events.onAll(({ eventName, data }) => {
-//	console.log(eventName, data);
-//})
-
 // Шаблоны
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
@@ -56,8 +51,7 @@ header.render();
 api.getCards()
 	.then((data) => {
 		cardsData.setCards(data);
-		console.log('Получены данные с сервера:', data);
-	})
+	});
 
 events.on(`cards:changed`, () => {
 	const cardsArray = cardsData.getCards()
@@ -66,12 +60,20 @@ events.on(`cards:changed`, () => {
 		return cardInstant.render(cards);
 		})
 	gallery.render({galleryLoad: newArr });
-	console.log('До рендера галереи: ',cardsArray,'после: ',gallery.render);
-})
+});
 
-events.on('card:open', ({id}: {id: string})  => {
+events.on('card:open', ({id}: {id: string}) => {
 	const cardData = cardsData.getCard(id);
-	const cardInstant = new CardPreview(cloneTemplate(cardPreviewTemplate), events, cardClass);
+	const isInBasket = basketData.cardInBasket(id); // Проверяем наличие в корзине
+
+	const cardInstant = new CardPreview(
+		cloneTemplate(cardPreviewTemplate),
+		events,
+		cardClass
+	);
+
+	cardInstant.setState(isInBasket); // Устанавливаем состояние через метод
+
 	const cardRendered = cardInstant.render({
 		id: cardData.id,
 		title: cardData.title,
@@ -81,10 +83,9 @@ events.on('card:open', ({id}: {id: string})  => {
 		description: cardData.description
 	});
 
-
 	modal.render({content: cardRendered});
-	//console.log('Эта картдата',cardsData.getCard(id), 'Эта кардрендеред',cardRendered)
-})
+});
+
 
 events.on ('card:put', ({id}: {id: string})  => {
 	const cardData = cardsData.getCard(id);
@@ -98,11 +99,11 @@ events.on ('card:put', ({id}: {id: string})  => {
 		price: cardData.price,
 		index: indexLength
 	});}
-})
+});
 
 events.on ('card:delete', ( card: ICardBasket)  => {
 	basketData.deleteCard(card.id);
-})
+});
 
 events.on ('basketCards:changed', (cards: ICardBasket[])  => {
 	header.render({count: cards.length});
@@ -127,13 +128,13 @@ events.on('basket:open',() => {
 		modal.render({
 			content: renderedBasket
 		});
-})
+});
 
 events.on('orderPaymentForm:open',() => {
 	const renderedFormOrder = orderPayment.render();
 	modal.render({content: renderedFormOrder});
 	orderPayment.valid = false;
-})
+});
 
 events.on('orderPaymentForm:changedButton',(value: {payment: string})  => {
 	clientData.setClientPayment(value);
@@ -144,7 +145,7 @@ events.on('orderPaymentForm:changedButton',(value: {payment: string})  => {
 events.on('orderPaymentForm:changedInput',(value: {address: string})  => {
 	clientData.setClientAddress(value);
 	orderPayment.render()
-})
+});
 
 events.on('orderPaymentForm:submit', () => {
 	const renderedOrderContacts = orderContacts.render();
@@ -155,13 +156,13 @@ events.on('orderPaymentForm:submit', () => {
 events.on('orderContactsForm:changedEmailInput',(value: {email: string})  => {
 	clientData.setClientEmail(value);
 	orderPayment.render()
-})
+});
 
 events.on('orderContactsForm:changedPhoneInput',(value: {phone: string})  => {
 	clientData.setClientPhone(value);
 
 	orderPayment.render()
-})
+});
 
 events.on('clientData:changed', () => {
 
@@ -191,17 +192,23 @@ events.on('orderContactsForm:submit', () => {
 		items: basketList,
 		total: totalPrice,
 		...clientOrderData
-	}
+	};
 
 	console.log(orderData);
 
 	api.postOrder(orderData)
 		.then((data: ICheck) => {
-			const renderedSuccess = success.render({totalPrice: data.total});
+			const renderedSuccess = success.render({total: data.total});
+			console.log(data.total)
 			modal.render({content: renderedSuccess});
 		})
 		.catch(err => console.error(err));
 });
+
+events.on('success', () => {
+	basketData.clearCards();
+	modal.close();
+})
 
 events.on('modal:open', () => {
 	page.locked = true;
@@ -209,4 +216,4 @@ events.on('modal:open', () => {
 
 events.on('modal:close', () => {
 	page.locked = false;
-})
+});

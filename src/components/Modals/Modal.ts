@@ -18,8 +18,6 @@ export class Modal extends Component<IModal> {
 						this.close();
 					}
 				});
-        //this.container.addEventListener('click', this.close.bind(this));
-        //this._content.addEventListener('click', (event) => event.stopPropagation());
 				this.handleEscUp = this.handleEscUp.bind(this);
     }
 
@@ -30,14 +28,14 @@ export class Modal extends Component<IModal> {
     open() {
         this.container.classList.add('modal_active');
         this.events.emit('modal:open');
-				console.log('Происходит modal:open')
+				document.addEventListener('keyup', this.handleEscUp);
     }
 
     close() {
         this.container.classList.remove('modal_active');
         this.content = null;
         this.events.emit('modal:close');
-			console.log('Происходит modal:close')
+			  document.removeEventListener('keyup', this.handleEscUp);
     }
 
 		handleEscUp(event: KeyboardEvent) {

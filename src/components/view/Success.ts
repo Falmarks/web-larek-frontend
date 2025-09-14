@@ -20,6 +20,7 @@ export class Success extends Component<ISuccess> {
 	}
 
 	set total(value: number) {
+		console.log('Сейчас я постараюсь записать значение ',value);
 		this.setText(this.totalPrice, `Списано ${value} синапсов`);
 	}
 }

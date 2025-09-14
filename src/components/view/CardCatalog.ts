@@ -23,6 +23,15 @@ export class CardCatalog extends Card <ICardCatalog>{
 		);
 	};
 
+	set price (price: number) {
+		if (price) {
+			this.cardPrice.textContent = price.toString();
+		}
+		else {
+			this.cardPrice.textContent = 'Бесценно';
+		}
+	};
+
 	set category(value: string) {
 		const valueClass: string = this.cardClass[value];
 		this.setText(this.cardCategory, value);
