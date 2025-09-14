@@ -28,7 +28,7 @@ export class CardPreview extends Card<ICardData> {
 	}
 		set category(value: string) {
 			this.setText(this.cardCategory, value);
-			this.toggleClass(this.cardCategory, value)
+			this.toggleClass(this.cardCategory, value, true)
 		};
 		set image(value: string) {
 			const trueValue = `${CDN_URL}`+`${value.slice(0, -3) + 'png'}`;

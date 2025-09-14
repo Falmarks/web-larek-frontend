@@ -26,7 +26,7 @@ export class CardCatalog extends Card <ICardCatalog>{
 	set category(value: string) {
 		const valueClass: string = this.cardClass[value];
 		this.setText(this.cardCategory, value);
-		this.toggleClass(this.cardCategory, valueClass)
+		this.toggleClass(this.cardCategory, valueClass, true)
 	};
 	set image(value: string) {
 		const trueValue = `${CDN_URL}`+`${value.slice(0, -3) + 'png'}`;

@@ -1,8 +1,8 @@
 import {
 	IClient,
 	Payment,
-	TClientModalNumberMail,
-	TClientModalPaymentAddress,
+	TOrderNumberMail,
+	TOrderPaymentAddress,
 } from '../../types';
 import { IEvents } from '../base/events';
 
@@ -13,7 +13,7 @@ export class ClientData {
 		phone: '',
 		email: '',
 		address: '',
-		checkPayment: false
+		//checkPayment: false
 	}
 	protected errorMessage: string;
 
@@ -26,12 +26,12 @@ export class ClientData {
 		this.events.emit('clientData:changed');
 	}
 
-	setClientAddress (value: TClientModalPaymentAddress){
+	setClientAddress (value: TOrderPaymentAddress){
 		this.client.address = value.address;
 		this.events.emit('clientData:changed');
 	}
 
-	setClientNumberMail (value: TClientModalNumberMail) {
+	setClientNumberMail (value: TOrderNumberMail) {
 		this.client.email = value.email;
 		this.client.phone = value.phone;
 		this.events.emit('clientData:changed');
@@ -44,12 +44,18 @@ export class ClientData {
 
 		if (!isPayment) {
 			this.errorMessage = 'Необходимо выбрать способ оплаты'
+			console.log(this.errorMessage);
 		}
 		if (!this.client.address) {
 			this.errorMessage = 'Необходимо указать адрес'
+			console.log(this.errorMessage);
 		}
 
 		return !!inputValue;
+	}
+
+	getErrorMessage() {
+		return this.errorMessage;
 	}
 
 	getClientData(): IClient {

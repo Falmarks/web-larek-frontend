@@ -123,26 +123,45 @@ events.on('basket:open',() => {
 })
 
 events.on('orderPaymentForm:open',() => {
-	const renderedFormOrder = Order.render({checkPayment: false});
+	const renderedFormOrder = Order.render();
 	modal.render({content: renderedFormOrder});
-	events.on('orderPayment:changed',({payment}: {payment: Payment})  => {
-		clientData.setClientPayment(payment)
-		Order.render({ checkPayment: true})
-	})
+	Order.valid = false;
+	events.on('orderPaymentForm:changed',({inputsValues}: {inputsValues: Record<string,string>})  => {
+		console.log('я маненький папищик, я палутяю ',inputsValues);
+		//clientData.setClientAddress(inputsValues.address);
+		//clientData.setClientPayment(inputsValues.payment);
+		Order.render();
+	});
+
 	events.on('clientData:changed', () => {
-		const Data = clientData.getClientData()
-		console.log('Способ оплаты: ',Data.payment)
-		Order.paymentMethod = Data.payment;
-	});
-
-	events.on('modal:open', () => {
-		page.locked = true;
-		console.log('Сейчас должно добавляться враппер локед')
-	});
-
-	events.on('modal:close', () => {
-		page.locked = false;
-		console.log('Сейчас должно убавляться враппер локед')
+		const data = clientData.getClientData()
+		const isValid = clientData.checkUserValidation(data.address);
+		Order.paymentMethod = data.payment;
+		Order.render({
+			valid: isValid,
+			errors: clientData.getErrorMessage()
+		});
+		console.log('isValid ',isValid);
+		console.log('Order.valid: ',Order.valid);
 	});
 })
 
+events.on('orderPaymentForm:submit', (value) => {
+		const Data  = clientData.getClientData();
+		const isAddressValid = clientData.checkUserValidation(Data.address);
+		const isPaymentValid = Data.payment !== '';
+		const isValid = isAddressValid && isPaymentValid;
+
+		Order.render({
+			valid: isValid,
+			errors: clientData.getErrorMessage()
+		});
+});
+
+events.on('modal:open', () => {
+	page.locked = true;
+});
+
+events.on('modal:close', () => {
+	page.locked = false;
+})

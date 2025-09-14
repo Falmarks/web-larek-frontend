@@ -4,12 +4,10 @@ export interface IClient {
 	address: string;
 	email: string;
 	phone: string;
-	checkPayment: boolean;
+	//checkPayment: boolean;
 }
 
-export type TClientModalPaymentAddress = Pick<IClient, 'payment' | 'address'| 'checkPayment'>;
 
-export type TClientModalNumberMail = Pick<IClient, 'email' | 'phone'>;
 
 export interface IOrderData {
 	payment: string;
@@ -21,6 +19,10 @@ export interface IOrderData {
 	errors: string;
 	items: string[];
 }
+
+export type TOrderPaymentAddress = Pick<IOrderData, 'payment' | 'address' | 'valid' | 'errors'>;
+
+export type TOrderNumberMail = Pick<IOrderData, 'email' | 'phone'>;
 
 export interface  ICheck {
 	id: string;
