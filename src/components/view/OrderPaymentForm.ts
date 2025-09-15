@@ -37,11 +37,11 @@ export class OrderPaymentForm extends Form<TOrderPaymentAddress> {
 
 	set paymentMethod(value: string) {
 		if (value === 'card') {
-			this.onlineButton.classList.add('button_alt-active');
-			this.cashButton.classList.remove('button_alt-active');
+			this.toggleClass(this.onlineButton, 'button_alt-active', true);
+			this.toggleClass(this.cashButton, 'button_alt-active', false);
 		} else {
-			this.cashButton.classList.add('button_alt-active');
-			this.onlineButton.classList.remove('button_alt-active');
+			this.toggleClass(this.onlineButton, 'button_alt-active', false);
+			this.toggleClass(this.cashButton, 'button_alt-active', true);
 		}
 	}
 }

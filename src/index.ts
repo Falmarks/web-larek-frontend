@@ -13,7 +13,7 @@ import { Modal } from './components/Modals/Modal';
 import { Basket } from './components/view/Basket';
 import { Header } from './components/view/Header';
 import { CardBasket } from './components/view/CardBascet';
-import { ICardBasket, ICheck, IOrderData, Payment } from './types';
+import { ICardBasket, ICheck} from './types';
 import { OrderPaymentForm } from './components/view/OrderPaymentForm';
 import { ClientData } from './components/model/ClientData';
 import { Page } from './components/view/Page';
@@ -51,7 +51,8 @@ header.render();
 api.getCards()
 	.then((data) => {
 		cardsData.setCards(data);
-	});
+	})
+.catch(err => console.error(err));
 
 events.on(`cards:changed`, () => {
 	const cardsArray = cardsData.getCards()
@@ -64,7 +65,7 @@ events.on(`cards:changed`, () => {
 
 events.on('card:open', ({id}: {id: string}) => {
 	const cardData = cardsData.getCard(id);
-	const isInBasket = basketData.cardInBasket(id); // Проверяем наличие в корзине
+	const isInBasket = basketData.cardInBasket(id);
 
 	const cardInstant = new CardPreview(
 		cloneTemplate(cardPreviewTemplate),
@@ -72,7 +73,7 @@ events.on('card:open', ({id}: {id: string}) => {
 		cardClass
 	);
 
-	cardInstant.setState(isInBasket); // Устанавливаем состояние через метод
+	cardInstant.setState(isInBasket);
 
 	const cardRendered = cardInstant.render({
 		id: cardData.id,

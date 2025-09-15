@@ -26,13 +26,13 @@ export class Modal extends Component<IModal> {
     }
 
     open() {
-        this.container.classList.add('modal_active');
+				this.toggleClass(this.container, 'modal_active', true);
         this.events.emit('modal:open');
 				document.addEventListener('keyup', this.handleEscUp);
     }
 
     close() {
-        this.container.classList.remove('modal_active');
+				this.toggleClass(this.container, 'modal_active', false);
         this.content = null;
         this.events.emit('modal:close');
 			  document.removeEventListener('keyup', this.handleEscUp);
