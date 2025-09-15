@@ -7,6 +7,7 @@ export class OrderPaymentForm extends Form<TOrderPaymentAddress> {
 	protected cashButton: HTMLButtonElement;
 	protected onlineButton: HTMLButtonElement;
 	protected addressInput: HTMLInputElement;
+	protected payment = '';
 
 
 	constructor(container: HTMLFormElement, events: IEvents) {
@@ -21,7 +22,7 @@ export class OrderPaymentForm extends Form<TOrderPaymentAddress> {
 		});
 
 		this.onlineButton.addEventListener('click', ()=> {
-			this.events.emit('orderPaymentForm:changedButton', {payment: 'card'});
+			this.events.emit('orderPaymentForm:changedButton', {payment:'card'});
 		});
 
 		this.addressInput.addEventListener('input', () => {
@@ -31,17 +32,22 @@ export class OrderPaymentForm extends Form<TOrderPaymentAddress> {
 		this.form.addEventListener('submit', (evt: SubmitEvent) => {
 			evt.preventDefault();
 			this.clear();
+			this.paymentMethod = '';
 			events.emit('orderPaymentForm:submit');
 		});
 	}
 
 	set paymentMethod(value: string) {
+		console.log(value);
 		if (value === 'card') {
 			this.toggleClass(this.onlineButton, 'button_alt-active', true);
 			this.toggleClass(this.cashButton, 'button_alt-active', false);
-		} else {
+		} else if (value === 'cash') {
 			this.toggleClass(this.onlineButton, 'button_alt-active', false);
 			this.toggleClass(this.cashButton, 'button_alt-active', true);
+		} else {
+			this.toggleClass(this.onlineButton, 'button_alt-active', false);
+			this.toggleClass(this.cashButton, 'button_alt-active', false);
 		}
 	}
 }

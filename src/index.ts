@@ -140,12 +140,10 @@ events.on('orderPaymentForm:open',() => {
 events.on('orderPaymentForm:changedButton',(value: {payment: string})  => {
 	clientData.setClientPayment(value);
 	orderPayment.paymentMethod = value.payment;
-	orderPayment.render();
 });
 
 events.on('orderPaymentForm:changedInput',(value: {address: string})  => {
 	clientData.setClientAddress(value);
-	orderPayment.render()
 });
 
 events.on('orderPaymentForm:submit', () => {
@@ -195,18 +193,16 @@ events.on('orderContactsForm:submit', () => {
 		...clientOrderData
 	};
 
-	console.log(orderData);
-
 	api.postOrder(orderData)
 		.then((data: ICheck) => {
 			const renderedSuccess = success.render({total: data.total});
-			console.log(data.total)
 			modal.render({content: renderedSuccess});
 		})
 		.catch(err => console.error(err));
 });
 
 events.on('success', () => {
+	clientData.clearData();
 	basketData.clearCards();
 	modal.close();
 })

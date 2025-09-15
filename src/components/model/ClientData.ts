@@ -22,35 +22,24 @@ export class ClientData {
 
 	setClientPayment(value: { payment: string }) {
 		this.client.payment = value.payment;
-		console.log('Текущие данные платежа: ',this.client.payment);
 		this.events.emit('clientData:changed');
 	}
 
 	setClientAddress(value: Partial<TOrderPaymentAddress>) {
 		this.client.address = value.address;
-		console.log('Текущие данные адреса: ',this.client.address);
 		this.events.emit('clientData:changed');
 	}
 
 	setClientPhone(value: Partial<TOrderNumberMail>) {
 		this.client.phone = value.phone;
-		console.log('Текущие данные номера: ',this.client.phone);
-		console.dir(this.client.phone);
-		console.dir(value.phone);
-		console.dir(value);
 		this.events.emit('clientData:changed');
 	}
 
 	setClientEmail(value: Partial<TOrderNumberMail>) {
 		this.client.email = value.email;
-		console.log('Текущие данные почты: ',this.client.phone);
-		console.dir(this.client.email);
-		console.dir(value.email);
-		console.dir(value);
 		this.events.emit('clientData:changed');
 	}
 
-	// Валидация для формы оплаты
 	validatePayment(): boolean {
 		const { payment, address } = this.client;
 		this.paymentErrors = '';
@@ -66,7 +55,6 @@ export class ClientData {
 		return true;
 	}
 
-	// Валидация для формы контактов
 	validateContacts(): boolean {
 		const { phone, email } = this.client;
 		this.contactsErrors = '';
@@ -93,4 +81,17 @@ export class ClientData {
 	getClientData(): IClient {
 		return this.client;
 	}
+	clearData() {
+		if (this.client) {
+			this.client = {
+				payment: '',
+				phone: '',
+				email: '',
+				address: ''
+			};
+		} else {
+			console.error('Клиент не инициализирован');
+		}
+		this.events.emit(`clientData:changed`);
+	};
 }
